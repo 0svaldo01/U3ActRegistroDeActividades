@@ -1,0 +1,6 @@
+@U3ActRegistroDeActividadesApi_HostAddress = http://localhost:5120
+
+GET {{U3ActRegistroDeActividadesApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
