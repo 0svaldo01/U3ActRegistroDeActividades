@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 using U3ActRegistroDeActividadesApi.Models.Entities;
+using U3ActRegistroDeActividadesApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-#region Servicios
-builder.Services.AddControllers();
+#region Servicios                                                                        
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+    .AddJsonOptions(x => x.JsonSerializerOptions.MaxDepth = 6);
 #region Agregar Swagger con JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -38,8 +41,10 @@ builder.Services.AddSwaggerGen(c =>
 var Db = builder.Configuration.GetConnectionString("DbConnectionString");
 builder.Services.AddMySql<ItesrcneActividadesContext>(Db, ServerVersion.AutoDetect(Db));
 #endregion
+#region
+builder.Services.AddTransient<DepartamentosRepository>();
 
-
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
