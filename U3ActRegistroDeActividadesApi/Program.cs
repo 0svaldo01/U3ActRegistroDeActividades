@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using U3ActRegistroDeActividadesApi.Models.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+#region Base de datos
+var Db = builder.Configuration.GetConnectionString("DbConnectionString");
+builder.Services.AddMySql<ItesrcneActividadesContext>(Db, ServerVersion.AutoDetect(Db));
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
