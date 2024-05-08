@@ -25,11 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\DTOs\" />
     <Folder Include="Models\Entities\" />
-    <Folder Include="Models\Validators\" />
     <Folder Include="Controllers\" />
-    <Folder Include="Repositories\" />
+    <Folder Include="Models\DTOs\" />
+    <Folder Include="Models\Security\" />
+    <Folder Include="Models\Validators\" />
   </ItemGroup>
 
 </Project>
