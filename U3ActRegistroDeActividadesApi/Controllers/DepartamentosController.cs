@@ -10,7 +10,10 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpGet("/")]
         public IActionResult GetDepartamentos()
         {
-            var deptos = departamentosRepository.GetDepartamentos();
+            //Obtener todas las actividades de los departamentos
+            //var deptos = departamentosRepository.GetDepartamentos().Select(x => x.Actividades.Select(a => a.Titulo));
+            //Obtener el nombre de todos los departamentos
+            var deptos = departamentosRepository.GetDepartamentos().Select(x => x.Nombre);
             if (deptos != null)
             {
                 return Ok(deptos);
