@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Entities\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\DTOs\" />
     <Folder Include="Models\Security\" />
     <Folder Include="Models\Validators\" />
