@@ -28,7 +28,6 @@
     <Folder Include="Models\Entities\" />
     <Folder Include="Models\DTOs\" />
     <Folder Include="Models\Security\" />
-    <Folder Include="Models\Validators\" />
   </ItemGroup>
 
 </Project>
