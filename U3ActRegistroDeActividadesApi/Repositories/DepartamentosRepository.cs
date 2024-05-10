@@ -51,7 +51,8 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 //Cambiamos el IdSuperior los subordinados directos
                 foreach (var subordinado in departamento.InverseIdSuperiorNavigation)
                 {
-                    subordinado.IdSuperior = 0;
+
+                    subordinado.IdSuperior = departamento.IdSuperior ?? 0;
                     //Actualizamos el subordinado
                     Update(subordinado);
                 }
