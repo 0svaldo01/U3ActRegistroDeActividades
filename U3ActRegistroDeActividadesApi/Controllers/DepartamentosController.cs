@@ -13,11 +13,11 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         public IActionResult GetDepartamentoActividades(int id)
         {
             var depto = departamentosRepository.GetActividadesRecursivasPorDepartamento(id);
-            return Ok(depto);
+            return depto != null ? Ok(depto) : NotFound("No hay departamentos");
         }
 
         //Ejemplo de uso de validadores con fluentvalidation
-        [HttpPost]
+        [HttpPost("/Agregar")]
         public IActionResult Agregar(DepartamentoDTO dto)
         {
             DepartamentoDTOValidator validador = new();
