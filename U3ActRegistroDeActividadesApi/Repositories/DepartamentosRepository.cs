@@ -14,11 +14,10 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 .Include(x => x.InverseIdSuperiorNavigation);
             return depas;
         }
-
         public DeptoDTO GetActividadesRecursivasPorDepartamento(int departamentoId)
         {
             //Obtener el departamento raiz
-            var depa = GetDepartamentos(departamentoId);
+            var depa = GetDepartamento(departamentoId);
             if (depa != null)
             {
                 //crear un dto
@@ -40,9 +39,30 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 };
                 return depto;
             }
+            //Es necesario regresar un nuevo objeto debido a que los subordinados no puede ser null
+            //En el body del response se veria asi []
             return new();
         }
+        public Departamentos? GetDepartamento(int id) => GetDepartamentos().FirstOrDefault(x => x.Id == id);
+        public bool EliminarDepartamento(int id)
+        {
+            //Buscamos el departamentos raiz
+            var departamento = GetDepartamento(id);
+            if (departamento != null)
+            {
+                //Cambiamos el IdSuperior los subordinados directos
+                foreach (var subordinado in departamento.InverseIdSuperiorNavigation)
+                {
+                    subordinado.IdSuperior = 0;
+                    //Actualizamos el subordinado
+                    Update(subordinado);
+                }
+                // Ahora que el departamento no tiene subordinados se puede eliminar
+                Delete(departamento);
+                return true;
+            }
+            return false;
+        }
 
-        public Departamentos? GetDepartamentos(int id) => GetDepartamentos().FirstOrDefault(x => x.Id == id);
     }
 }

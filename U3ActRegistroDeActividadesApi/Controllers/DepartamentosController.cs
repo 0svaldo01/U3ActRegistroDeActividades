@@ -9,17 +9,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
     [ApiController]
     public class DepartamentosController(DepartamentosRepository departamentosRepository) : ControllerBase
     {
-        [HttpGet("/")]
-        public IActionResult GetDepartamentos()
-        {
-            var departamentos = departamentosRepository.GetDepartamentos();
-
-            if (departamentos != null)
-            {
-                return Ok(departamentos);
-            }
-            return NotFound("No se han encontrado departamentos");
-        }
         [HttpGet("/Departamento/{id:int}")]
         public IActionResult GetDepartamentoActividades(int id)
         {
