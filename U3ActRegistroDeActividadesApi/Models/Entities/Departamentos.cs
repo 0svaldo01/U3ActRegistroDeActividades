@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace U3ActRegistroDeActividadesApi.Models.Entities;
+﻿namespace U3ActRegistroDeActividadesApi.Models.Entities;
 
 public partial class Departamentos
 {

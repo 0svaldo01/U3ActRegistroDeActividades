@@ -12,15 +12,19 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpGet("/")]
         public IActionResult GetDepartamentos()
         {
-            //Obtener todas las actividades de los departamentos
-            //var deptos = departamentosRepository.GetDepartamentos().Select(x => x.Actividades.Select(a => a.Titulo));
-            //Obtener el nombre de todos los departamentos
-            var deptos = departamentosRepository.GetDepartamentos().Select(x => x.Nombre);
-            if (deptos != null)
+            var departamentos = departamentosRepository.GetDepartamentos();
+
+            if (departamentos != null)
             {
-                return Ok(deptos);
+                return Ok(departamentos);
             }
             return NotFound("No se han encontrado departamentos");
+        }
+        [HttpGet("/Departamento/{id:int}")]
+        public IActionResult GetDepartamentoActividades(int id)
+        {
+            var depto = departamentosRepository.GetActividadesRecursivasPorDepartamento(id);
+            return Ok(depto);
         }
 
         //Ejemplo de uso de validadores con fluentvalidation

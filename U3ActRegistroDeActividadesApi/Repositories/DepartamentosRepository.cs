@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using U3ActRegistroDeActividadesApi.Models.DTOs;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 
 namespace U3ActRegistroDeActividadesApi.Repositories
@@ -8,13 +9,40 @@ namespace U3ActRegistroDeActividadesApi.Repositories
         public ItesrcneActividadesContext Context = Context;
         public IEnumerable<Departamentos> GetDepartamentos()
         {
-            return Context.Departamentos
+            var depas = Context.Departamentos
                 .Include(x => x.Actividades)
-                .Include(x => x.IdSuperiorNavigation)
-                .Include(x => x.InverseIdSuperiorNavigation)
-                .OrderBy(x => x.Nombre);
+                .Include(x => x.InverseIdSuperiorNavigation);
+            return depas;
         }
 
-        public Departamentos? GetDepartamentos(int id) => GetAll().FirstOrDefault(x => x.Id == id);
+        public DeptoDTO GetActividadesRecursivasPorDepartamento(int departamentoId)
+        {
+            //Obtener el departamento raiz
+            var depa = GetDepartamentos(departamentoId);
+            if (depa != null)
+            {
+                //crear un dto
+                DeptoDTO depto = new()
+                {
+                    Departamento = depa.Nombre,
+                    Actividades = depa.Actividades.Select(a => new ActividadDTO
+                    {
+                        Descripcion = a.Descripcion,
+                        FechaActualizacion = a.FechaActualizacion,
+                        Estado = a.Estado,
+                        FechaCreacion = a.FechaCreacion,
+                        FechaRealizacion = a.FechaRealizacion,
+                        IdDepartamento = a.IdDepartamento,
+                        Titulo = a.Titulo
+                    }),
+                    Subordinados = depa.InverseIdSuperiorNavigation
+                                .Select(subdep => GetActividadesRecursivasPorDepartamento(subdep.Id))
+                };
+                return depto;
+            }
+            return new();
+        }
+
+        public Departamentos? GetDepartamentos(int id) => GetDepartamentos().FirstOrDefault(x => x.Id == id);
     }
 }

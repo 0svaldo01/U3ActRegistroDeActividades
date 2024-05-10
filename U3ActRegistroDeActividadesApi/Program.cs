@@ -5,7 +5,10 @@ using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 #region Servicios
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers()
+    //Hace que no haya problemas con los loops en la base de datos
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 #region Agregar Swagger con JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
