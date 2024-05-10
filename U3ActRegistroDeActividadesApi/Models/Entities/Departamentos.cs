@@ -12,9 +12,9 @@ public partial class Departamentos
 
     public int? IdSuperior { get; set; }
 
-    public virtual ICollection<Actividades> Actividades { get; set; } = new List<Actividades>();
+    public virtual ICollection<Actividades> Actividades { get; set; } = [];
 
     public virtual Departamentos? IdSuperiorNavigation { get; set; }
 
-    public virtual ICollection<Departamentos> InverseIdSuperiorNavigation { get; set; } = new List<Departamentos>();
+    public virtual ICollection<Departamentos> InverseIdSuperiorNavigation { get; set; } = [];
 }
