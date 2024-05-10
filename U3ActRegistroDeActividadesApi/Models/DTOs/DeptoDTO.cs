@@ -2,8 +2,9 @@
 {
     public class DeptoDTO
     {
+        public int Id { get; set; }
         public string Departamento { get; set; } = string.Empty;
         public IEnumerable<ActividadDTO> Actividades { get; set; } = null!;
-        public IEnumerable<DeptoDTO>? Subordinados { get; set; }
+        public IEnumerable<DeptoDTO> Subordinados { get; set; } = null!;
     }
 }

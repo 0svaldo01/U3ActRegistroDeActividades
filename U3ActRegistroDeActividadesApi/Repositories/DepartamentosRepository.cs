@@ -24,6 +24,7 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 //crear un dto
                 DeptoDTO depto = new()
                 {
+                    Id = depa.Id,
                     Departamento = depa.Nombre,
                     Actividades = depa.Actividades.Select(a => new ActividadDTO
                     {
@@ -35,8 +36,7 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                         IdDepartamento = a.IdDepartamento,
                         Titulo = a.Titulo
                     }),
-                    Subordinados = depa.InverseIdSuperiorNavigation
-                                .Select(subdep => GetActividadesRecursivasPorDepartamento(subdep.Id))
+                    Subordinados = depa.InverseIdSuperiorNavigation.Select(subdep => GetActividadesRecursivasPorDepartamento(subdep.Id))
                 };
                 return depto;
             }
