@@ -44,10 +44,8 @@ namespace U3ActRegistroDeActividadesApi.Repositories
             return new();
         }
         public Departamentos? GetDepartamento(int id) => GetDepartamentos().FirstOrDefault(x => x.Id == id);
-        public bool EliminarDepartamento(int id)
+        public void EliminarDepartamento(Departamentos departamento)
         {
-            //Buscamos el departamentos raiz
-            var departamento = GetDepartamento(id);
             if (departamento != null)
             {
                 //Cambiamos el IdSuperior los subordinados directos
@@ -59,10 +57,7 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 }
                 // Ahora que el departamento no tiene subordinados se puede eliminar
                 Delete(departamento);
-                return true;
             }
-            return false;
         }
-
     }
 }

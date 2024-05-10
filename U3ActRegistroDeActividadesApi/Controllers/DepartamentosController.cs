@@ -35,8 +35,8 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var departamento = departamentosRepository.GetById(id);
             if (departamento != null)
             {
-                departamentosRepository.Delete(departamento);
-                return Ok();
+                departamentosRepository.EliminarDepartamento(departamento);
+                return Ok("Se ah eliminado el departamento");
             }
             return NotFound("No se ah encontrado el departamento");
         }
