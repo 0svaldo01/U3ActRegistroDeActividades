@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <Folder Include="Models\Entities\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

@@ -45,5 +45,10 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             //}
             //return BadRequest("Selecciona la actividad que desee eliminar");
         }
+        [HttpPut("/Update")]
+        public IActionResult Editar(ActividadDTO dto)
+        {
+            return Ok();
+        }
     }
 }
