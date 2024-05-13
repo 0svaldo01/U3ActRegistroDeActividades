@@ -66,7 +66,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     actividad.IdDepartamento = dto.IdDepartamento;
 
                     Repositorio.Update(actividad);
-                    return Ok("Actividad eliminada");
+                    return Ok("Actividad actualizada");
                 }
                 return NotFound("No existe la actividad que se desea eliminar");
             }
