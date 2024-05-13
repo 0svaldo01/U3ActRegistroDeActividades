@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\**" />
+    <Compile Remove="ViewModels\**" />
     <Compile Remove="Views\**" />
+    <Content Remove="Services\**" />
+    <Content Remove="ViewModels\**" />
     <Content Remove="Views\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
     <EmbeddedResource Remove="Views\**" />
+    <None Remove="Services\**" />
+    <None Remove="ViewModels\**" />
     <None Remove="Views\**" />
   </ItemGroup>
 
@@ -28,8 +36,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Entities\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

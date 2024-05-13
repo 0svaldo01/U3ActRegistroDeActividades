@@ -16,11 +16,9 @@ namespace U3ActRegistroDeActividadesApi.Repositories
         }
         public DeptoDTO GetActividadesRecursivasPorDepartamento(int departamentoId)
         {
-            //Obtener el departamento raiz
             var depa = GetDepartamento(departamentoId);
             if (depa != null)
             {
-                //crear un dto
                 DeptoDTO depto = new()
                 {
                     Id = depa.Id,
@@ -48,15 +46,19 @@ namespace U3ActRegistroDeActividadesApi.Repositories
         {
             if (departamento != null)
             {
-                //Cambiamos el IdSuperior los subordinados directos
-                foreach (var subordinado in departamento.InverseIdSuperiorNavigation)
+                /** 
+                 * Al eliminar un departamento, el departamento no debe tener departamentos subordinados
+                 *  por lo que primero se cambiaran todos los departamentos subordinados,
+                 *  del departamento que se desea eliminar, para que no haya problemas en la eliminacion
+                 */
+                foreach (var subdepto in departamento.InverseIdSuperiorNavigation)
                 {
-
-                    subordinado.IdSuperior = departamento.IdSuperior ?? 0;
-                    //Actualizamos el subordinado
-                    Update(subordinado);
+                    subdepto.IdSuperior = departamento.IdSuperior ?? 0;
+                    Update(subdepto);
                 }
-                // Ahora que el departamento no tiene subordinados se puede eliminar
+                /** 
+                 * Ahora que el departamento no tiene subordinados se puede eliminar
+                 */
                 Delete(departamento);
             }
         }

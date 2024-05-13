@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
 using U3ActRegistroDeActividadesApi.Repositories;
 
@@ -7,7 +6,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ActividadesController(ActividadesRepository Repositorio) : ControllerBase
     {
         [HttpGet("/")]
@@ -20,6 +18,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return NotFound("No hay actividades");
         }
+
         [HttpGet("/{id:int}")]
         public IActionResult GetActividad(int id)
         {
@@ -45,6 +44,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             //}
             //return BadRequest("Selecciona la actividad que desee eliminar");
         }
+
         [HttpPut("/Update")]
         public IActionResult Editar(ActividadDTO dto)
         {
