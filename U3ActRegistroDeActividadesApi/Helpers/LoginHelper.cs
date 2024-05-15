@@ -17,22 +17,27 @@ namespace U3ActRegistroDeActividadesApi.Helpers
                 List<Claim> Claims =
                 [
                     new Claim("id",departamento.Id.ToString()),
-                    new Claim("idSuperior",departamento.IdSuperior.ToString()??""),
+                    new Claim("idSuperior",departamento.IdSuperior.HasValue.ToString()??"0"),
                     new Claim(ClaimTypes.Name, departamento.Nombre),
                     new Claim(ClaimTypes.Role,departamento.IdSuperior!=null?"Usuario":"Administrador")
                 ];
 
                 JwtSecurityTokenHandler handler = new();
+                var SigningCredential = new SigningCredentials
+                                         (
+                                             new SymmetricSecurityKey
+                                             (
+                                                Encoding.UTF8.GetBytes(Configuracion.Key)
+                                             ),
+                                             SecurityAlgorithms.HmacSha512
+                                         );
                 var token = handler.CreateToken(new SecurityTokenDescriptor()
                 {
                     Issuer = Configuracion.Issuer,
                     Audience = Configuracion.Audiance,
                     IssuedAt = DateTime.UtcNow,
                     Expires = DateTime.UtcNow.AddHours(2),
-
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Configuracion.Key)), SecurityAlgorithms.HmacSha512),
-
+                    SigningCredentials = SigningCredential,
                     Subject = new ClaimsIdentity(Claims, JwtBearerDefaults.AuthenticationScheme)
                 });
                 return handler.WriteToken(token);
