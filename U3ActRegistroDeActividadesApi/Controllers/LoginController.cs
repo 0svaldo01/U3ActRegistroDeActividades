@@ -1,38 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using U3ActRegistroDeActividadesApi.Helpers;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
-using U3ActRegistroDeActividadesApi.Models.Validators;
+using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Repositories;
 
 namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController(DepartamentosRepository Repositorio, IConfiguration configuration) : ControllerBase
+    public class LoginController(IGenericRepository<Departamentos> Repositorio, JWTHelper _helper) : ControllerBase
     {
-        [HttpPost("/Login")]
-        public IActionResult Login(LoginDTO dto)
+        [HttpPost]
+        public IActionResult Authenticate(LoginDTO dto)
         {
-            LoginDTOValidator validator = new();
-            var result = validator.Validate(dto);
-            if (result.IsValid)
+            var depto = Repositorio.GetAll().FirstOrDefault(x => x.Username == dto.Username && x.Password == dto.Password);
+
+            if (depto == null)
             {
-                var departamento = Repositorio.GetAll()
-                .FirstOrDefault(depto => depto.Username == dto.Username && depto.Password == dto.Password);
-
-                string token = "";
-                if (departamento != null &&
-                    !string.IsNullOrWhiteSpace(token = LoginHelper.GetToken(departamento, configuration)))
-                {
-                    return Ok(token);
-                }
-                else
-                {
-                    return Unauthorized("Usuario no autorizado");
-                }
-
+                return Unauthorized();
             }
-            return BadRequest("Ingresa los datos solicitados");
+            var token = _helper.GetToken(depto.Nombre, depto.IdSuperior == null ? "Admin" : "Periodista",
+                                [
+                                    new Claim("Id", depto.Id.ToString()),
+                                    new Claim("IdSuperior",depto.IdSuperior.ToString()??""),
+                                    new Claim(ClaimTypes.Name,depto.Nombre),
+                                    new Claim(ClaimTypes.Role,depto.IdSuperior>0?"Usuario":"Administrador")
+                                ]);
+            return Ok(token);
         }
     }
 }
