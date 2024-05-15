@@ -3,7 +3,7 @@ using U3ActRegistroDeActividadesApi.Models.Entities;
 
 namespace U3ActRegistroDeActividadesApi.Repositories
 {
-    public class GenericRepository<T>(ItesrcneActividadesContext Context) where T : class
+    public class GenericRepository<T>(ItesrcneActividadesContext Context) : IGenericRepository<T> where T : class
     {
         public virtual DbSet<T> GetAll()
         {

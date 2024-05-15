@@ -10,41 +10,34 @@ namespace U3ActRegistroDeActividadesApi.Helpers
 {
     public class LoginHelper
     {
-        private static JWT? JWTConfig;
-        public static string GetToken(Departamentos departamento, IConfiguration Configuracion)
+        public static string GetToken(Departamentos departamento, JWT Configuracion)
         {
-            JWTConfig = Configuracion.GetSection("JWT").Get<JWT>() ?? new();
-            if (Configuracion != null)
+            if (Configuracion != null && departamento != null)
             {
-                if (JWTConfig != null && departamento != null)
-                {
-                    List<Claim> Claims = [
-                        new Claim("id",departamento.Id.ToString()),
-                        new Claim("idSuperior",departamento.IdSuperior.ToString()??""),
-                        new Claim(ClaimTypes.Name, departamento.Nombre)
-                        ];
+                List<Claim> Claims =
+                [
+                    new Claim("id",departamento.Id.ToString()),
+                    new Claim("idSuperior",departamento.IdSuperior.ToString()??""),
+                    new Claim(ClaimTypes.Name, departamento.Nombre),
+                    new Claim(ClaimTypes.Role,departamento.IdSuperior!=null?"Usuario":"Administrador")
+                ];
 
-                    JwtSecurityTokenHandler handler = new();
-                    var token = handler.CreateToken(new SecurityTokenDescriptor()
-                    {
-                        Issuer = JWTConfig.Issuer,
-                        Audience = JWTConfig.Audiance,
-                        IssuedAt = DateTime.UtcNow,
-                        Expires = DateTime.UtcNow.AddMinutes(2),
-                        SigningCredentials = GetCredentials(),
-                        Subject = new ClaimsIdentity(Claims, JwtBearerDefaults.AuthenticationScheme)
-                    });
-                    var result = handler.WriteToken(token);
-                    return result;
-                }
+                JwtSecurityTokenHandler handler = new();
+                var token = handler.CreateToken(new SecurityTokenDescriptor()
+                {
+                    Issuer = Configuracion.Issuer,
+                    Audience = Configuracion.Audiance,
+                    IssuedAt = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddHours(2),
+
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(Configuracion.Key)), SecurityAlgorithms.HmacSha512),
+
+                    Subject = new ClaimsIdentity(Claims, JwtBearerDefaults.AuthenticationScheme)
+                });
+                return handler.WriteToken(token);
             }
             return "";
-        }
-        private static SigningCredentials GetCredentials()
-        {
-            return new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig != null ? JWTConfig.Key : ""))
-                , SecurityAlgorithms.HmacSha256);
         }
     }
 }

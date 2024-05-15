@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using U3ActRegistroDeActividadesApi.Helpers;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
+using U3ActRegistroDeActividadesApi.Models.Security;
 using U3ActRegistroDeActividadesApi.Models.Validators;
 using U3ActRegistroDeActividadesApi.Repositories;
 
@@ -19,18 +20,19 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             {
                 var departamento = Repositorio.GetAll()
                 .FirstOrDefault(depto => depto.Username == dto.Username && depto.Password == dto.Password);
-
-                string token = "";
-                if (departamento != null &&
-                    !string.IsNullOrWhiteSpace(token = LoginHelper.GetToken(departamento, configuration)))
+                if (departamento != null)
                 {
-                    return Ok(token);
+                    string token = "";
+                    JWT datos = configuration.GetSection("JWT").Get<JWT>() ?? new();
+                    if (!string.IsNullOrWhiteSpace(token = LoginHelper.GetToken(departamento, datos)))
+                    {
+                        return Ok(token);
+                    }
                 }
                 else
                 {
                     return Unauthorized("Usuario no autorizado");
                 }
-
             }
             return BadRequest("Ingresa los datos solicitados");
         }

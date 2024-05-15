@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Models.Validators;
@@ -8,6 +9,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Administrador,Usuario")]
     public class DepartamentosController(DepartamentosRepository departamentosRepository) : ControllerBase
     {
         [HttpGet("/Actividades/{id:int}")]
@@ -16,8 +18,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var depto = departamentosRepository.GetActividadesRecursivasPorDepartamento(id);
             return depto != null ? Ok(depto) : NotFound("No hay departamentos");
         }
-
-        //Ejemplo de uso de validadores con fluentvalidation
         [HttpPost("/Agregar")]
         public IActionResult Agregar(DepartamentoDTO dto)
         {

@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Repositories;
@@ -36,9 +39,27 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+#region JWT
+//Agregar Autorizacion para el jwt
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
+(
+    jwt => jwt.TokenValidationParameters = new()
+    {
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidAudience = builder.Configuration["JWT:Audiance"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"] ?? "")),
+        ValidateAudience = true,
+        ValidateIssuer = true
+    }
+);
+#endregion
+
 #endregion
 #region Transient`s
-builder.Services.AddTransient<DepartamentosRepository>();
+//Esta linea de codigo evita utilizar el AddTransient varias veces
+//pero necesita la implementacion de la interface extraida del repositorio generico
+builder.Services.AddTransient(typeof(IGenericRepository<>));
 #endregion
 #endregion
 #region Base de datos
