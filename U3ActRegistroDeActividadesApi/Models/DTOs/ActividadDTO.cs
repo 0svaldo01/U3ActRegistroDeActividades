@@ -10,5 +10,6 @@
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaActualizacion { get; set; }
         public int Estado { get; set; }
+        public IFormFile Imagen { get; set; } = null!;
     }
 }
