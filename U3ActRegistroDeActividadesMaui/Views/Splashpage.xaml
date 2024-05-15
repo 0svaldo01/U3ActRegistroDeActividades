@@ -3,10 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="U3ActRegistroDeActividadesMaui.Views.Splashpage">
     <VerticalStackLayout BackgroundColor="#277B3F">
-        <Image Source="Assets/itesrc.png" WidthRequest="100" HeightRequest="100"></Image>
+        <Image Source="itesrc.png" WidthRequest="300" HeightRequest="400"
+          Margin="0,50"></Image>
         <Label 
-            Text="Gestión y registro de actividades ITESRC"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+     Text="Gestión y registro de actividades" FontSize="24"
+     VerticalOptions="Center" FontAttributes="Bold" TextColor="White"
+     HorizontalOptions="Center" Margin="10,0" />
+        <Label 
+       Text="ITESRC" FontSize="28" Margin="0,20,0,0"
+       VerticalOptions="Center" FontAttributes="Bold" TextColor="White"
+      HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentView>
