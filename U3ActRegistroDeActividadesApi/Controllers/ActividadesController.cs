@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Models.Validators;
@@ -33,13 +31,13 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpPost("/Create")]
         public async Task<ActionResult<ActividadDTO>> PostActividad([FromForm] ActividadDTO dto)
         {
+
             if (dto.Imagen == null || dto.Imagen.Length == 0)
             {
                 return BadRequest("Debe subir una imagen.");
             }
+            var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg";
 
-            var filePath = Path.Combine($"wwwroot/Images/{dto.Titulo}", Path.GetRandomFileName() + Path.GetExtension(dto.Imagen.FileName));
-        
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await dto.Imagen.CopyToAsync(stream);
@@ -48,7 +46,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             // Crear la entidad Actividad a partir del DTO
             var actividad = new Actividades
             {
-                Id =0,
+                Id = 0,
                 Titulo = dto.Titulo,
                 Descripcion = dto.Descripcion,
                 FechaRealizacion = dto.FechaRealizacion,
@@ -56,7 +54,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                 FechaCreacion = DateTime.Now,
                 FechaActualizacion = DateTime.Now,
                 Estado = dto.Estado,
-                
             };
 
             Repositorio.Insert(actividad);
@@ -95,6 +92,10 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                 var actividad = Repositorio.GetActividad(dto.Id);
                 if (actividad != null)
                 {
+                    if (actividad.IdDepartamento != dto.IdDepartamento)
+                    {
+                        return Conflict("La actividad pertenece a otro departamento");
+                    }
                     actividad.Estado = 1;
                     actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
                     actividad.Descripcion = dto.Descripcion;
