@@ -35,7 +35,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var result = validador.Validate(dto);
             if (result.IsValid)
             {
-                var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg";
+                var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg");
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
