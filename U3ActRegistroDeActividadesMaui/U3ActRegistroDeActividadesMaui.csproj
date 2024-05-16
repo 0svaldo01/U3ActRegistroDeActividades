@@ -82,9 +82,9 @@
 	  <Resource Include="Resources\Images\itesrc.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Resource>
-	  <Resource Include="Resources\Splash\itesrcsplash.png">
+	  <MauiSplashScreen Include="Resources\Splash\itesrcsplash.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
+	  </MauiSplashScreen>
 	</ItemGroup>
 
 	<ItemGroup>
