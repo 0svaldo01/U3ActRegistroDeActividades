@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace U3ActRegistroDeActividadesMaui.Services
 {
-    internal class ActividadesService
+    public class ActividadesService
     {
+        HttpClient cliente;
+
+        public ActividadesService()
+        {
+                
+        }
     }
 }

@@ -98,6 +98,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\AgregarDepView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\AgregarView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using TableAttribute = SQLite.TableAttribute;
 
 namespace U3ActRegistroDeActividadesMaui.Models.DTOs
 {

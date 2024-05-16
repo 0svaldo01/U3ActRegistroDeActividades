@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace U3ActRegistroDeActividadesMaui.Models.DTOs
 {
-    internal class ActividadDTO
+    public class ActividadDTO
     { 
         public int Id { get; set; }
         public string Titulo { get; set; } = null!;

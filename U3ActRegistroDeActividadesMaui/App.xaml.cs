@@ -22,7 +22,7 @@ namespace U3ActRegistroDeActividadesMaui
         {
             Device.StartTimer(TimeSpan.FromSeconds(3), () =>
             {
-                MainPage = new NavigationPage(new LoginView());
+                MainPage = new NavigationPage(new AgregarDepView());
                 return false;
             });
         }

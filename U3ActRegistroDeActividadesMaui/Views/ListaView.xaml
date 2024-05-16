@@ -20,8 +20,13 @@
   
   
     <VerticalStackLayout>
-        <Button Text="Agregar" BackgroundColor="#52BC70" TextColor="White" WidthRequest="200" Margin="10"
+        <HorizontalStackLayout>
+            <Button Text="+ Departamento" BackgroundColor="#52BC70" TextColor="White" WidthRequest="140" Margin="10"
+           />
+            <Button Text="+ Actividad" BackgroundColor="#52BC70" TextColor="White" WidthRequest="140" Margin="10"
                 HorizontalOptions="End"/>
+        </HorizontalStackLayout>
+
 
         <ScrollView VerticalOptions="FillAndExpand">
             <SwipeView>
