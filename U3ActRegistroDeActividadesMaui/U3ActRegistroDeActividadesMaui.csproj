@@ -75,6 +75,7 @@
 	<ItemGroup>
 	  <Folder Include="Assets\" />
 	  <Folder Include="Services\" />
+	  <Folder Include="Services\" />
 	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 

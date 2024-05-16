@@ -11,5 +11,6 @@ namespace U3ActRegistroDeActividadesApi.Models.Validators
             RuleFor(x => x.Descripcion).NotEmpty().NotNull().WithMessage("La descripción no debe ser núlo o vacío");
             RuleFor(x => x.Imagen).NotEmpty().NotNull().WithMessage("La imagen no debe ser nula o vacía");
         }
+
     }
 }

@@ -58,7 +58,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     departamentosRepository.Update(depto);
                     return Ok("Se ah agregado el departamento exitosamente");
                 }
-                return NotFound("No se ah encontrado el departamento que desea actualizar");
+                return NotFound("No se ha encontrado el departamento que desea actualizar");
             }
             return BadRequest("Ingrese los datos solicitados");
         }
@@ -72,7 +72,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                 departamentosRepository.EliminarDepartamento(departamento);
                 return Ok("Se ah eliminado el departamento");
             }
-            return NotFound("No se ah encontrado el departamento");
+            return NotFound("No se ha encontrado el departamento");
         }
     }
 }
