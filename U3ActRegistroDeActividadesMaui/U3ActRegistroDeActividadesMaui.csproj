@@ -20,6 +20,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
+		<EnableSplashScreenProcessing>false</EnableSplashScreenProcessing>
+
 		<!-- Display name -->
 		<ApplicationTitle>U3ActRegistroDeActividadesMaui</ApplicationTitle>
 
@@ -43,7 +45,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Splash Screen -->
-		<MauiSplahScreen Include="Resources\Splash\itesrcsplash.png" Color="#277B3F" BaseSize="128,128"></MauiSplahScreen>
+		<MauiSplahScreen Include="Resources\Splash\itesrclogo.png" Color="#277B3F" BaseSize="128,128"></MauiSplahScreen>
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
@@ -56,7 +58,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Remove="Resources\Images\itesrclogo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Assets\itesrc.png" />
+	  <None Remove="Resources\Images\itesrclogo.png" />
 	  <None Remove="Resources\Splash\itesrcsplash.png" />
 	</ItemGroup>
 
@@ -74,7 +81,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Assets\" />
-	  <Folder Include="Services\" />
 	  <Folder Include="ViewModels\" />
 	</ItemGroup>
 
@@ -82,6 +88,7 @@
 	  <Resource Include="Resources\Images\itesrc.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Resource>
+	  <MauiSplashScreen Include="Resources\Splash\itesrclogo.png" />
 	  <MauiSplashScreen Include="Resources\Splash\itesrcsplash.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </MauiSplashScreen>
