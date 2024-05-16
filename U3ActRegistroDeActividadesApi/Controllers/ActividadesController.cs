@@ -31,33 +31,34 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpPost("/Create")]
         public async Task<ActionResult<ActividadDTO>> PostActividad([FromForm] ActividadDTO dto)
         {
-
-            if (dto.Imagen == null || dto.Imagen.Length == 0)
+            ActividadDTOValidator validador = new();
+            var result = validador.Validate(dto);
+            if (result.IsValid)
             {
-                return BadRequest("Debe subir una imagen.");
+                var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg";
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.Imagen.CopyToAsync(stream);
+                }
+
+                // Crear la entidad Actividad a partir del DTO
+                var actividad = new Actividades
+                {
+                    Id = 0,
+                    Titulo = dto.Titulo,
+                    Descripcion = dto.Descripcion,
+                    FechaRealizacion = dto.FechaRealizacion,
+                    IdDepartamento = dto.IdDepartamento,
+                    FechaCreacion = DateTime.Now,
+                    FechaActualizacion = DateTime.Now,
+                    Estado = dto.Estado,
+                };
+
+                Repositorio.Insert(actividad);
+                return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
             }
-            var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg";
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await dto.Imagen.CopyToAsync(stream);
-            }
-
-            // Crear la entidad Actividad a partir del DTO
-            var actividad = new Actividades
-            {
-                Id = 0,
-                Titulo = dto.Titulo,
-                Descripcion = dto.Descripcion,
-                FechaRealizacion = dto.FechaRealizacion,
-                IdDepartamento = dto.IdDepartamento,
-                FechaCreacion = DateTime.Now,
-                FechaActualizacion = DateTime.Now,
-                Estado = dto.Estado,
-            };
-
-            Repositorio.Insert(actividad);
-            return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
+            return BadRequest("Ingrese los datos solicitados");
         }
 
 
