@@ -14,8 +14,9 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpPost]
         public IActionResult Authenticate(LoginDTO dto)
         {
+            //Encriptacion de Contraseña
+            dto.Password = Encriptacion.EncriptarSHA512(dto.Password);
             var depto = Repositorio.GetAll().FirstOrDefault(x => x.Username == dto.Username && x.Password == dto.Password);
-
             if (depto == null)
             {
                 return Unauthorized();
