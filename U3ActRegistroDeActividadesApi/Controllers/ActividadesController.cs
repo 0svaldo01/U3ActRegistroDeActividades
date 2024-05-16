@@ -28,6 +28,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var actividad = Repositorio.GetActividad(id);
             return actividad != null ? Ok(actividad) : NotFound("No existe la actividad");
         }
+
         [HttpPost("/Create")]
         public async Task<ActionResult<ActividadDTO>> PostActividad([FromForm] ActividadDTO dto)
         {
@@ -60,8 +61,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Ingrese los datos solicitados");
         }
-
-
         [HttpDelete("/Delete")]
         public IActionResult Eliminar(ActividadDTO dto)
         {

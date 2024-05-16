@@ -10,9 +10,9 @@ namespace U3ActRegistroDeActividadesApi.Helpers
         public string GetToken(string username, string role, List<Claim> claims)
         {
             JwtSecurityTokenHandler handler = new();
-            var issuer = conf.GetSection("JWTBearer").GetValue<string>("Issuer") ?? "";
-            var secret = conf.GetSection("JWTBearer").GetValue<string>("Secret");
-            var audience = conf.GetSection("JWTBearer").GetValue<string>("Audience") ?? "";
+            var issuer = conf.GetSection("JWT").GetValue<string>("Issuer") ?? "";
+            var secret = conf.GetSection("JWT").GetValue<string>("Key");
+            var audience = conf.GetSection("JWT").GetValue<string>("Audiance") ?? "";
 
             List<Claim> basicas = [
                 new Claim(ClaimTypes.Name, username),

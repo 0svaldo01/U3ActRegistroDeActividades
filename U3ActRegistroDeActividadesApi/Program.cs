@@ -70,6 +70,8 @@ if (Jwt != null)
 #region Transient`s
 builder.Services.AddSingleton<JWTHelper>();
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddTransient<ActividadesRepository>();
+builder.Services.AddTransient<DepartamentosRepository>();
 #endregion
 #endregion
 #region Base de datos
@@ -91,6 +93,7 @@ if (app.Environment.IsDevelopment())
 
 #region Configuracion
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
