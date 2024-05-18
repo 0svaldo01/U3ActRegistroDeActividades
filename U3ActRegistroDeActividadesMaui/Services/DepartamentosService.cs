@@ -9,6 +9,7 @@ namespace U3ActRegistroDeActividadesMaui.Services
         HttpClient client = new();
         public DepartamentosService()
         {
+            //Este link puede cambiar
             client.BaseAddress = new Uri("http://localhost:55555/");
         }
         public async Task<IEnumerable<DepartamentoDTO>?>? GetAll(DepartamentoDTO dto)
