@@ -5,8 +5,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:U3ActRegistroDeActividadesMaui"
     xmlns:views="clr-namespace:U3ActRegistroDeActividadesMaui.Views"
+    xmlns:viewmodels="clr-namespace:U3ActRegistroDeActividadesMaui.ViewModels"
     Shell.FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="#277B3F"
     Title="U3ActRegistroDeActividadesMaui">
+
+    <Shell.BindingContext>
+        <viewmodels:ActividadesViewModel></viewmodels:ActividadesViewModel>
+    </Shell.BindingContext>
+
+    <ShellContent 
+        ContentTemplate="{DataTemplate views:ListaView}" Route="ListaAct"></ShellContent>
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:AgregarView}" Route="AgregarAct"></ShellContent>
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:EditarView}" Route="EditarAct"></ShellContent>
     
     <ShellContent
         Title="Home"

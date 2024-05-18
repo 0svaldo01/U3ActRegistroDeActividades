@@ -1,9 +1,12 @@
-﻿using U3ActRegistroDeActividadesMaui.Views;
+﻿using U3ActRegistroDeActividadesMaui.Services;
+using U3ActRegistroDeActividadesMaui.Views;
 
 namespace U3ActRegistroDeActividadesMaui
 {
     public partial class App : Application
     {
+        public static ActividadesService ActividadesService { get; set; } = new();
+
         public App()
         {
             InitializeComponent();
@@ -15,6 +18,15 @@ namespace U3ActRegistroDeActividadesMaui
             {
                 Content = splashPage
             };
+        }
+
+        async void Sincronizador()
+        {
+            while (true)
+            {
+                await ActividadesService.GetActividades();
+                Thread.Sleep(TimeSpan.FromSeconds(15));
+            }
         }
 
         //buscando otra manera
