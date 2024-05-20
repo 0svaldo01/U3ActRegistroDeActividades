@@ -20,6 +20,10 @@
     <ShellContent
         ContentTemplate="{DataTemplate views:AgregarView}" Route="AgregarAct"></ShellContent>
 
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:AgregarDepView}" Route="AgregarDep"></ShellContent>
+
     <ShellContent
         ContentTemplate="{DataTemplate views:EditarView}" Route="EditarAct"></ShellContent>
     

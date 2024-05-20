@@ -6,6 +6,7 @@ namespace U3ActRegistroDeActividadesMaui
     public partial class App : Application
     {
         public static ActividadesService ActividadesService { get; set; } = new();
+        public static DepartamentosService DepartamentosService { get; set; } = new();  
 
         public App()
         {
@@ -25,6 +26,7 @@ namespace U3ActRegistroDeActividadesMaui
             while (true)
             {
                 await ActividadesService.GetActividades();
+                await DepartamentosService.GetDepartamentos();
                 Thread.Sleep(TimeSpan.FromSeconds(15));
             }
         }

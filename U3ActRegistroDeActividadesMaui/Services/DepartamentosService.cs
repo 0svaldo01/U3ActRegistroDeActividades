@@ -7,11 +7,72 @@ namespace U3ActRegistroDeActividadesMaui.Services
     public class DepartamentosService
     {
         HttpClient client = new();
+
+        Repositories.DepartamentosRepository departamentosRepository = new();
         public DepartamentosService()
         {
             //Este link puede cambiar
             client.BaseAddress = new Uri("http://localhost:55555/");
         }
+
+        public event Action? DatosActualizadosDep;
+
+
+        public async Task GetDepartamentos()
+        {
+            try
+            {
+                var fecha = Preferences.Get("UltimaFechaActualizacion", DateTime.MinValue);
+
+                bool aviso = false;
+
+                var response = await client.GetFromJsonAsync<List<DepartamentoDTO>>($"/Departamentos/{fecha:yyyy-MM-dd}/{fecha:HH}/{fecha:mm}");
+
+                if (response != null)
+                {
+                    foreach (DepartamentoDTO departamento in response)
+                    {
+                        var entidad = departamentosRepository.Get(departamento.Id);
+
+                        if(entidad == null)
+                        {
+                            entidad = new()
+                            {
+                                Id = entidad.Id,
+                                Username = entidad.Username
+
+                            };
+                            departamentosRepository.Insert(entidad);
+                            aviso = true;
+                        }
+                        else
+                        {
+                            if(entidad != null)
+                            {
+                                
+                            }
+                        }
+
+                        if (aviso)
+                        {
+
+                            _ = MainThread.InvokeOnMainThreadAsync(() =>
+                            {
+                                DatosActualizadosAct?.Invoke();
+                            });
+                        }
+
+                        //Preferences.Set("UltimaFechaActualizacion", response.Max(x => ));
+
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task<IEnumerable<DepartamentoDTO>?>? GetAll(DepartamentoDTO dto)
         {
             try
