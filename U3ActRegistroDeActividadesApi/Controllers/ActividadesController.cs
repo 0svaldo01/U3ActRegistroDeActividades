@@ -62,7 +62,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             return BadRequest("Ingrese los datos solicitados");
         }
         [HttpPut("/Update")]
-        public async Task<IActionResult> EditarAsync(ActividadDTO dto)
+        public async Task<IActionResult> EditarAsync([FromForm] ActividadDTO dto)
         {
             ActividadDTOValidator validador = new();
             var result = validador.Validate(dto);
@@ -75,7 +75,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     {
                         return Conflict("La actividad pertenece a otro departamento");
                     }
-                    actividad.Estado = 1;
+                    actividad.Estado = dto.Estado > 0 ? dto.Estado : 0;
                     actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
                     actividad.Descripcion = dto.Descripcion;
                     actividad.Titulo = dto.Titulo;
@@ -94,27 +94,18 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Selecciona la actividad que desee eliminar");
         }
-        [HttpDelete("/Delete")]
-        public IActionResult Eliminar(ActividadDTO dto)
+        [HttpDelete("/Delete/{id:int}")]
+        public IActionResult Eliminar(int id)
         {
-            ActividadDTOValidator validador = new();
-            var result = validador.Validate(dto);
-            if (result.IsValid)
+            var actividad = Repositorio.GetActividad(id);
+            if (actividad != null && actividad.Estado != 2)
             {
-                var actividad = Repositorio.GetActividad(dto.Id);
-                if (actividad != null)
-                {
-                    actividad.Estado = 0;    // Baja lógica
-                    actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
-
-                    Repositorio.Update(actividad);
-                    return Ok("Actividad eliminada");
-                }
-                return NotFound("No existe la actividad que se desea eliminar");
+                actividad.Estado = 2;    // Baja lógica
+                actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
+                Repositorio.Update(actividad);
+                return Ok("Actividad eliminada");
             }
-            return BadRequest("Selecciona la actividad que desee eliminar");
+            return NotFound("No existe la actividad que se desea eliminar");
         }
-
-
     }
 }
