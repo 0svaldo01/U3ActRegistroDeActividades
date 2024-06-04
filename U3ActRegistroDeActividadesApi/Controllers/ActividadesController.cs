@@ -7,8 +7,8 @@ using U3ActRegistroDeActividadesApi.Repositories;
 namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
-    //[Authorize(Roles = "Administrador")]
+    [ApiController]
+    //[Authorize(Roles = "Admin,Depto")]
     public class ActividadesController(ActividadesRepository Repositorio) : ControllerBase
     {
         [HttpGet("/")]
@@ -43,7 +43,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     await dto.Imagen.CopyToAsync(stream);
                 }
 
-                // Crear la entidad Actividad a partir del DTO
                 var actividad = new Actividades
                 {
                     Id = 0,
@@ -51,11 +50,10 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     Descripcion = dto.Descripcion,
                     FechaRealizacion = dto.FechaRealizacion,
                     IdDepartamento = dto.IdDepartamento,
-                    FechaCreacion = DateTime.Now,
-                    FechaActualizacion = DateTime.Now,
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaActualizacion = DateTime.UtcNow,
                     Estado = dto.Estado,
                 };
-
                 Repositorio.Insert(actividad);
                 return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
             }
@@ -83,7 +81,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         }
 
         [HttpPut("/Update")]
-        public IActionResult Editar(ActividadDTO dto)
+        public async Task<IActionResult> EditarAsync(ActividadDTO dto)
         {
             ActividadDTOValidator validador = new();
             var result = validador.Validate(dto);
@@ -102,7 +100,12 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     actividad.Titulo = dto.Titulo;
                     actividad.FechaRealizacion = dto.FechaRealizacion;
                     actividad.IdDepartamento = dto.IdDepartamento;
+                    var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg");
 
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.Imagen.CopyToAsync(stream);
+                    }
                     Repositorio.Update(actividad);
                     return Ok("Actividad actualizada");
                 }

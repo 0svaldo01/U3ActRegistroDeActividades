@@ -8,7 +8,9 @@ namespace U3ActRegistroDeActividadesApi.Repositories
         private readonly ItesrcneActividadesContext Context = context;
         public IEnumerable<Actividades> GetActividades()
         {
-            return Context.Actividades.Include(act => act.IdDepartamentoNavigation).OrderBy(act => act.Titulo);
+            return Context.Actividades
+                .Include(act => act.IdDepartamentoNavigation)
+                .OrderBy(act => act.Titulo);
         }
         public Actividades? GetActividad(int id)
         {

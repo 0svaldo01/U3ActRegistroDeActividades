@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using U3ActRegistroDeActividadesApi.Helpers;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Models.Validators;
@@ -9,7 +9,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrador,Usuario")]
+    //[Authorize(Roles = "Admin,Depto")]
     public class DepartamentosController(DepartamentosRepository departamentosRepository) : ControllerBase
     {
         [HttpGet("/Actividades/{id:int}")]
@@ -18,6 +18,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var depto = departamentosRepository.GetActividadesRecursivasPorDepartamento(id);
             return depto != null ? Ok(depto) : NotFound("No hay departamentos");
         }
+
         [HttpPost("/Agregar")]
         public IActionResult Agregar(DepartamentoDTO dto)
         {
@@ -30,7 +31,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     Id = 0,
                     IdSuperior = dto.IdSuperior,
                     Nombre = dto.Nombre,
-                    Password = dto.Password,
+                    Password = Encriptacion.EncriptarSHA512(dto.Password),
                     Username = dto.Username
                 };
                 departamentosRepository.Insert(depto);
@@ -38,6 +39,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Ingrese los datos solicitados");
         }
+
         [HttpPut("/Editar")]
         public IActionResult Editar(DepartamentoDTO dto)
         {
@@ -48,13 +50,11 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                 var depto = departamentosRepository.GetDepartamento(dto.Id);
                 if (depto != null)
                 {
-                    //Pasamos los datos del dto al departamento
                     depto.Id = dto.Id;
                     depto.Nombre = dto.Nombre;
                     depto.Username = dto.Username;
                     depto.IdSuperior = dto.IdSuperior;
-                    depto.Password = dto.Password;
-                    //Actualizamos el departamento
+                    depto.Password = Encriptacion.EncriptarSHA512(dto.Password);
                     departamentosRepository.Update(depto);
                     return Ok("Se ah agregado el departamento exitosamente");
                 }
@@ -66,7 +66,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
         [HttpDelete("/Eliminar/{id:int}")]
         public IActionResult Eliminar(int id)
         {
-            var departamento = departamentosRepository.GetById(id);
+            var departamento = departamentosRepository.GetDepartamento(id);
             if (departamento != null)
             {
                 departamentosRepository.EliminarDepartamento(departamento);

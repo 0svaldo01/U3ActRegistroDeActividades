@@ -8,23 +8,24 @@ using U3ActRegistroDeActividadesApi.Helpers;
 using U3ActRegistroDeActividadesApi.Models.Entities;
 using U3ActRegistroDeActividadesApi.Models.Security;
 using U3ActRegistroDeActividadesApi.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
-
-#region Servicios
-builder.Services.AddControllers()
-    //Hace que no haya problemas con los loops en la base de datos
-    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-#region Agregar Swagger con JWT
+#region Services
+builder.Services.AddControllers().AddJsonOptions(option =>
+{
+    option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
+#region Agregar Swagger con JWT
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RegistroActividadesApi", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "U3ActRegistroDeActividadesAPI", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Ingresa el token recibido por el login",
+        Description = "JWT Authorization header using the Bearer scheme",
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer"
+        Scheme = "Bearer"
 
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -42,58 +43,77 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
-#region JWT
-var Jwt = builder.Configuration.GetSection("JWT").Get<JWT>();
-//Agregar Autorizacion para el jwt
-builder.Services.AddAuthorization();
-
-if (Jwt != null)
+#endregion
+#region Autenticacion JWT
+var jwtoken = builder.Configuration.GetSection("JWT").Get<JWT>();
+if (jwtoken != null)
 {
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
-    x =>
-    {
-        x.TokenValidationParameters = new()
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
+    (
+        jwt =>
         {
-            ValidIssuer = Jwt.Issuer,
-            ValidAudience = Jwt.Audiance,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Jwt.Key ?? "")),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true
-        };
-    });
-}
-#endregion
-#endregion
+            jwt.TokenValidationParameters = new()
+            {
+                ValidIssuer = jwtoken.Issuer,
+                ValidAudience = jwtoken.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtoken.Key ?? "")),
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true
+            };
 
-#region Transient`s
+            jwt.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    Console.WriteLine($"Token validated: {context.SecurityToken}");
+                    return Task.CompletedTask;
+                }
+            };
+        }
+    );
+};
+#endregion
+#region Singleton
 builder.Services.AddSingleton<JWTHelper>();
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddTransient<ActividadesRepository>();
+builder.Services.AddSingleton<Encriptacion>();
+#endregion
+#region Transient`s
 builder.Services.AddTransient<DepartamentosRepository>();
+builder.Services.AddTransient<ActividadesRepository>();
 #endregion
 #endregion
-#region Base de datos
+#region Conexion a la base de datos
 var Db = builder.Configuration.GetConnectionString("DbConnectionString");
-builder.Services.AddDbContext<ItesrcneActividadesContext>
-(
-    x => x.UseMySql(Db, ServerVersion.AutoDetect(Db))
-);
+builder.Services.AddDbContext<ItesrcneActividadesContext>(x =>
+{
+    x.UseMySql(Db, ServerVersion.AutoDetect(Db));
+});
 #endregion
 var app = builder.Build();
-
-#region Implementacion Swagger
+#region Uso de Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 #endregion
-
-#region Configuracion
+#region Configuracion General de app
+app.UseCors(
+    x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowAnyOrigin()
+    );
+app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

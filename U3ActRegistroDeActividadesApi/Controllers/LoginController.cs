@@ -1,34 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using U3ActRegistroDeActividadesApi.Helpers;
 using U3ActRegistroDeActividadesApi.Models.DTOs;
-using U3ActRegistroDeActividadesApi.Models.Entities;
+using U3ActRegistroDeActividadesApi.Models.Security;
+using U3ActRegistroDeActividadesApi.Models.Validators;
 using U3ActRegistroDeActividadesApi.Repositories;
 
 namespace U3ActRegistroDeActividadesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController(IGenericRepository<Departamentos> Repositorio, JWTHelper _helper) : ControllerBase
+    public class LoginController(DepartamentosRepository Repositorio, IConfiguration config) : ControllerBase
     {
         [HttpPost]
-        public IActionResult Authenticate(LoginDTO dto)
+        public IActionResult Login(LoginDTO dto)
         {
-            //Encriptacion de Contraseña
-            dto.Password = Encriptacion.EncriptarSHA512(dto.Password);
-            var depto = Repositorio.GetAll().FirstOrDefault(x => x.Username == dto.Username && x.Password == dto.Password);
-            if (depto == null)
+            LoginDTOValidator validador = new();
+            var result = validador.Validate(dto);
+            if (result.IsValid)
             {
-                return Unauthorized();
+                dto.Password = Encriptacion.EncriptarSHA512(dto.Password);
+                var usuario = Repositorio.GetAll()
+                    .FirstOrDefault(x => x.Username == dto.Username && x.Password == dto.Password);
+                if (usuario != null)
+                {
+                    var jwt = config.GetSection("JWT").Get<JWT>();
+                    if (jwt != null)
+                    {
+                        string token = JWTHelper.GetToken(usuario, jwt);
+                        return Ok(token);
+                    }
+                    return StatusCode(500, "JWT no configurado");
+                }
+                return NotFound("Correo o contraseña incorrecta.");
             }
-            var token = _helper.GetToken(depto.Nombre, depto.IdSuperior == null ? "Admin" : "Periodista",
-                                [
-                                    new Claim("Id", depto.Id.ToString()),
-                                    new Claim("IdSuperior",depto.IdSuperior.ToString()??""),
-                                    new Claim(ClaimTypes.Name,depto.Nombre),
-                                    new Claim(ClaimTypes.Role,depto.IdSuperior>0?"Usuario":"Administrador")
-                                ]);
-            return Ok(token);
+            return BadRequest(result.Errors);
         }
     }
 }

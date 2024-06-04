@@ -6,9 +6,8 @@ namespace U3ActRegistroDeActividadesMaui.Services
 {
     public class DepartamentosService
     {
-        HttpClient client = new();
-
-        Repositories.DepartamentosRepository departamentosRepository = new();
+        private readonly HttpClient client = new();
+        private readonly Repositories.DepartamentosRepository departamentosRepository = new();
         public DepartamentosService()
         {
             //Este link puede cambiar
@@ -32,25 +31,22 @@ namespace U3ActRegistroDeActividadesMaui.Services
                 {
                     foreach (DepartamentoDTO departamento in response)
                     {
-                        var entidad = departamentosRepository.Get(departamento.Id);
+                        var anterior = departamentosRepository.Get(departamento.Id);
 
-                        if(entidad == null)
+                        if (anterior == null)
                         {
-                            entidad = new()
+                            anterior = new()
                             {
-                                Id = entidad.Id,
-                                Username = entidad.Username
-
+                                Id = departamento.Id,
+                                Username = departamento.Username
                             };
-                            departamentosRepository.Insert(entidad);
+                            departamentosRepository.Insert(anterior);
                             aviso = true;
                         }
                         else
                         {
-                            if(entidad != null)
-                            {
-                                
-                            }
+                            anterior.Nombre = departamento.Nombre;
+
                         }
 
                         if (aviso)
@@ -58,7 +54,7 @@ namespace U3ActRegistroDeActividadesMaui.Services
 
                             _ = MainThread.InvokeOnMainThreadAsync(() =>
                             {
-                                DatosActualizadosAct?.Invoke();
+                                DatosActualizadosDep?.Invoke();
                             });
                         }
 
@@ -73,7 +69,7 @@ namespace U3ActRegistroDeActividadesMaui.Services
             }
         }
 
-        public async Task<IEnumerable<DepartamentoDTO>?>? GetAll(DepartamentoDTO dto)
+        public async Task<IEnumerable<DepartamentoDTO>?>? GetAll()
         {
             try
             {

@@ -1,6 +1,4 @@
-﻿using U3ActRegistroDeActividadesApi.Models.Entities;
-
-namespace U3ActRegistroDeActividadesApi.Models.DTOs
+﻿namespace U3ActRegistroDeActividadesApi.Models.DTOs
 {
     public class DepartamentoDTO
     {
@@ -9,7 +7,5 @@ namespace U3ActRegistroDeActividadesApi.Models.DTOs
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
         public int? IdSuperior { get; set; }
-        public virtual ICollection<Actividades> Actividades { get; set; } = [];
-        public virtual ICollection<Departamentos> InverseIdSuperiorNavigation { get; set; } = [];
     }
 }

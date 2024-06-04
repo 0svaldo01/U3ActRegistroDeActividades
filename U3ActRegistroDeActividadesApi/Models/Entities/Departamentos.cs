@@ -1,4 +1,6 @@
-﻿namespace U3ActRegistroDeActividadesApi.Models.Entities;
+﻿using U3ActRegistroDeActividadesApi.Models.DTOs;
+
+namespace U3ActRegistroDeActividadesApi.Models.Entities;
 
 public partial class Departamentos
 {
@@ -17,4 +19,9 @@ public partial class Departamentos
     public virtual Departamentos? IdSuperiorNavigation { get; set; }
 
     public virtual ICollection<Departamentos> InverseIdSuperiorNavigation { get; set; } = [];
+
+    public static implicit operator Departamentos(DepartamentoDTO v)
+    {
+        throw new NotImplementedException();
+    }
 }

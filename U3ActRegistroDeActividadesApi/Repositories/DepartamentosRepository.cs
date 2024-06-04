@@ -19,19 +19,21 @@ namespace U3ActRegistroDeActividadesApi.Repositories
             var depa = GetDepartamento(departamentoId);
             if (depa != null)
             {
+
                 DeptoDTO depto = new()
                 {
                     Id = depa.Id,
                     Departamento = depa.Nombre,
                     Actividades = depa.Actividades.Select(a => new ActividadDTO
                     {
+                        Id = a.Id,
                         Descripcion = a.Descripcion,
                         FechaActualizacion = a.FechaActualizacion,
                         Estado = a.Estado,
                         FechaCreacion = a.FechaCreacion,
                         FechaRealizacion = a.FechaRealizacion,
                         IdDepartamento = a.IdDepartamento,
-                        Titulo = a.Titulo
+                        Titulo = a.Titulo,
                     }),
                     Subordinados = depa.InverseIdSuperiorNavigation.Select(subdep => GetActividadesRecursivasPorDepartamento(subdep.Id))
                 };
@@ -41,25 +43,40 @@ namespace U3ActRegistroDeActividadesApi.Repositories
             //En el body del response se veria asi []
             return new();
         }
-        public Departamentos? GetDepartamento(int id) => GetDepartamentos().FirstOrDefault(x => x.Id == id);
+        public Departamentos? GetDepartamento(int id)
+        {
+            return Context.Departamentos
+                .Include(x => x.Actividades)
+                .Include(x => x.InverseIdSuperiorNavigation).FirstOrDefault(x => x.Id == id);
+        }
+
         public void EliminarDepartamento(Departamentos departamento)
         {
             if (departamento != null)
             {
                 /** 
-                 * Al eliminar un departamento, el departamento no debe tener departamentos subordinados
-                 *  por lo que primero se cambiaran todos los departamentos subordinados,
-                 *  del departamento que se desea eliminar, para que no haya problemas en la eliminacion
+                 * Se eliminaran todos los departamentos subordinados al departamento qu se desea eliminar
                  */
                 foreach (var subdepto in departamento.InverseIdSuperiorNavigation)
                 {
-                    subdepto.IdSuperior = departamento.IdSuperior ?? 0;
-                    Update(subdepto);
+                    if (subdepto != null)
+                    {
+                        if (subdepto.IdSuperiorNavigation != null)
+                        {
+                            subdepto.IdSuperiorNavigation = null;
+                        }
+                        subdepto.IdSuperior = 0;
+                        Context.Departamentos.Remove(subdepto);
+                        Context.SaveChanges();
+                    }
                 }
                 /** 
                  * Ahora que el departamento no tiene subordinados se puede eliminar
                  */
-                Delete(departamento);
+                if (departamento.InverseIdSuperiorNavigation.Count == 0)
+                {
+                    Delete(departamento);
+                }
             }
         }
     }

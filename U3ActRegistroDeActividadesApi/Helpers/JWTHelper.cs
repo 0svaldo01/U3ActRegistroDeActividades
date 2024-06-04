@@ -1,33 +1,42 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using U3ActRegistroDeActividadesApi.Models.Entities;
+using U3ActRegistroDeActividadesApi.Models.Security;
 
 namespace U3ActRegistroDeActividadesApi.Helpers
 {
-    public class JWTHelper(IConfiguration conf)
+    public class JWTHelper
     {
-        public string GetToken(string username, string role, List<Claim> claims)
+        public static string GetToken(Departamentos depto, JWT JWT)
         {
+            List<Claim> Claims = [
+                new Claim("id",depto.Id.ToString()),
+                new Claim("idSuperior",depto.IdSuperior.ToString()??""),
+                new Claim(ClaimTypes.Name,depto.Nombre),
+                new Claim(ClaimTypes.Role,"Admin")
+                ];
             JwtSecurityTokenHandler handler = new();
-            var issuer = conf.GetSection("JWT").GetValue<string>("Issuer") ?? "";
-            var secret = conf.GetSection("JWT").GetValue<string>("Key");
-            var audience = conf.GetSection("JWT").GetValue<string>("Audiance") ?? "";
-
-            List<Claim> basicas = [
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, role),
-                new Claim(JwtRegisteredClaimNames.Iss , issuer),
-                new Claim(JwtRegisteredClaimNames.Aud, audience),
-            ];
-
-            basicas.AddRange(claims);
-            //new SigningCredentials
-            JwtSecurityToken jwtSecurity =
-                new(issuer, audience, basicas, DateTime.Now, DateTime.Now.AddMinutes(20),
-                new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? "")),
-                SecurityAlgorithms.HmacSha256));
-            return handler.WriteToken(jwtSecurity);
+            var Credentials = new SigningCredentials(
+                new SymmetricSecurityKey
+                (
+                     Encoding.UTF8.GetBytes(JWT.Key)
+                ),
+                SecurityAlgorithms.HmacSha256
+            );
+            var token = handler.CreateToken(new SecurityTokenDescriptor()
+            {
+                Issuer = JWT.Issuer,
+                Audience = JWT.Audience,
+                IssuedAt = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddHours(2),
+                NotBefore = DateTime.UtcNow,
+                SigningCredentials = Credentials,
+                Subject = new ClaimsIdentity(Claims, JwtBearerDefaults.AuthenticationScheme)
+            });
+            return handler.WriteToken(token);
         }
     }
 }
