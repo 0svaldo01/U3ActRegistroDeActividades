@@ -59,27 +59,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Ingrese los datos solicitados");
         }
-        [HttpDelete("/Delete")]
-        public IActionResult Eliminar(ActividadDTO dto)
-        {
-            ActividadDTOValidator validador = new();
-            var result = validador.Validate(dto);
-            if (result.IsValid)
-            {
-                var actividad = Repositorio.GetActividad(dto.Id);
-                if (actividad != null)
-                {
-                    actividad.Estado = 0;    // Baja lógica
-                    actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
-
-                    Repositorio.Update(actividad);
-                    return Ok("Actividad eliminada");
-                }
-                return NotFound("No existe la actividad que se desea eliminar");
-            }
-            return BadRequest("Selecciona la actividad que desee eliminar");
-        }
-
         [HttpPut("/Update")]
         public async Task<IActionResult> EditarAsync(ActividadDTO dto)
         {
@@ -113,5 +92,27 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Selecciona la actividad que desee eliminar");
         }
+        [HttpDelete("/Delete")]
+        public IActionResult Eliminar(ActividadDTO dto)
+        {
+            ActividadDTOValidator validador = new();
+            var result = validador.Validate(dto);
+            if (result.IsValid)
+            {
+                var actividad = Repositorio.GetActividad(dto.Id);
+                if (actividad != null)
+                {
+                    actividad.Estado = 0;    // Baja lógica
+                    actividad.FechaActualizacion = DateTime.UtcNow; //fecha en la que se realizo el cambio
+
+                    Repositorio.Update(actividad);
+                    return Ok("Actividad eliminada");
+                }
+                return NotFound("No existe la actividad que se desea eliminar");
+            }
+            return BadRequest("Selecciona la actividad que desee eliminar");
+        }
+
+
     }
 }
