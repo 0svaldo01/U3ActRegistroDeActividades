@@ -61,11 +61,14 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 {
                     if (subdepto != null)
                     {
-                        if (subdepto.IdSuperiorNavigation != null)
-                        {
-                            subdepto.IdSuperiorNavigation = null;
-                        }
-                        subdepto.IdSuperior = 0;
+                        //if (subdepto.IdSuperiorNavigation != null)
+                        //{
+                        //  subdepto.IdSuperiorNavigation = null;
+                        //}
+                        //subdepto.IdSuperior = 0;
+                        //Si se desea editar el departamento
+                        // Context.Departamentos.Update(subdepto);
+
                         Context.Departamentos.Remove(subdepto);
                         Context.SaveChanges();
                     }
