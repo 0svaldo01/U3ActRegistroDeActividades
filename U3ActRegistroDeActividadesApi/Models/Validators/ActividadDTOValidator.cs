@@ -17,7 +17,7 @@ namespace U3ActRegistroDeActividadesApi.Models.Validators
         private bool IsValidExtensionImage(IFormFile imagen)
         {
             var result = imagen.ContentType == "image/png" || imagen.ContentType == "image/jpg"
-              && imagen.ContentType == "image/jpeg";
+              || imagen.ContentType == "image/jpeg";
             return result;
         }
     }

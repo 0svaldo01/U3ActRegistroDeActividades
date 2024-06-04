@@ -36,12 +36,6 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             var result = validador.Validate(dto);
             if (result.IsValid)
             {
-                var filePath = Path.Combine($"wwwroot/Images/{dto.Id}.jpg");
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.Imagen.CopyToAsync(stream);
-                }
 
                 var actividad = new Actividades
                 {
@@ -55,6 +49,14 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                     Estado = dto.Estado,
                 };
                 Repositorio.Insert(actividad);
+                //Primero se agrega el objeto para que la imagen pueda obtener el Id
+                var filePath = Path.Combine($"wwwroot/Images/{actividad.Id}.jpg");
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.Imagen.CopyToAsync(stream);
+                }
+
                 return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
             }
             return BadRequest("Ingrese los datos solicitados");
