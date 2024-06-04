@@ -11,24 +11,8 @@ namespace U3ActRegistroDeActividadesApi.Controllers
     //[Authorize(Roles = "Admin,Depto")]
     public class ActividadesController(ActividadesRepository Repositorio) : ControllerBase
     {
-        [HttpGet("/")]
-        public IActionResult GetActividades()
-        {
-            var actividades = Repositorio.GetActividades();
-            if (actividades.Any())
-            {
-                return Ok(actividades);
-            }
-            return NotFound("No hay actividades");
-        }
-
-        [HttpGet("/{id:int}")]
-        public IActionResult GetActividad(int id)
-        {
-            var actividad = Repositorio.GetActividad(id);
-            return actividad != null ? Ok(actividad) : NotFound("No existe la actividad");
-        }
-
+        #region CRUD
+        #region Create
         [HttpPost("/Create")]
         public async Task<ActionResult<ActividadDTO>> PostActividad([FromForm] ActividadDTO dto)
         {
@@ -61,6 +45,52 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Ingrese los datos solicitados");
         }
+        #endregion
+        #region Read
+        [HttpGet("/")]
+        public IActionResult GetActividades()
+        {
+            var actividades = Repositorio.GetActividades().Select(actividad => new GetActividadDTO
+            {
+                Id = actividad.Id,
+                Departamento = actividad.IdDepartamentoNavigation.Nombre,
+                Descripcion = actividad.Descripcion,
+                Estado = actividad.Estado,
+                FechaActualizacion = actividad.FechaActualizacion,
+                FechaCreacion = actividad.FechaCreacion,
+                FechaRealizacion = actividad.FechaRealizacion,
+                Titulo = actividad.Titulo
+            });
+            if (actividades.Any())
+            {
+                return Ok(actividades);
+            }
+            return NotFound("No hay actividades");
+        }
+
+        [HttpGet("/{id:int}")]
+        public IActionResult GetActividad(int id)
+        {
+            var datos = Repositorio.GetActividad(id);
+            if (datos != null)
+            {
+                GetActividadDTO actividad = new()
+                {
+                    Id = datos.Id,
+                    Departamento = datos.IdDepartamentoNavigation.Nombre,
+                    Descripcion = datos.Descripcion,
+                    Estado = datos.Estado,
+                    FechaActualizacion = datos.FechaActualizacion,
+                    FechaCreacion = datos.FechaCreacion,
+                    FechaRealizacion = datos.FechaRealizacion,
+                    Titulo = datos.Titulo
+                };
+                return Ok(actividad);
+            }
+            return NotFound("No existe la actividad");
+        }
+        #endregion
+        #region Update
         [HttpPut("/Update")]
         public async Task<IActionResult> EditarAsync([FromForm] ActividadDTO dto)
         {
@@ -94,6 +124,8 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return BadRequest("Selecciona la actividad que desee eliminar");
         }
+        #endregion
+        #region Delete
         [HttpDelete("/Delete/{id:int}")]
         public IActionResult Eliminar(int id)
         {
@@ -107,5 +139,7 @@ namespace U3ActRegistroDeActividadesApi.Controllers
             }
             return NotFound("No existe la actividad que se desea eliminar");
         }
+        #endregion
+        #endregion
     }
 }
