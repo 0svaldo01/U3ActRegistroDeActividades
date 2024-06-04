@@ -49,7 +49,6 @@ namespace U3ActRegistroDeActividadesApi.Repositories
                 .Include(x => x.Actividades)
                 .Include(x => x.InverseIdSuperiorNavigation).FirstOrDefault(x => x.Id == id);
         }
-
         public void EliminarDepartamento(Departamentos departamento)
         {
             if (departamento != null)

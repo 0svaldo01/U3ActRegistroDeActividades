@@ -29,11 +29,13 @@ namespace U3ActRegistroDeActividadesApi.Controllers
                 Departamentos depto = new()
                 {
                     Id = 0,
-                    IdSuperior = dto.IdSuperior,
+                    IdSuperior = dto.IdSuperior > 0 ? dto.IdSuperior : null,
                     Nombre = dto.Nombre,
                     Password = Encriptacion.EncriptarSHA512(dto.Password),
                     Username = dto.Username
                 };
+
+
                 departamentosRepository.Insert(depto);
                 return Ok("Se ah agregado el departamento exitosamente");
             }
